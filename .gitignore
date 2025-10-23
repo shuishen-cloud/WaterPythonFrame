@@ -1,0 +1,13 @@
+# Python 编译文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+WaterFrameWork.egg-info/
+venv/
+
+# 日志文件
+*.log
+
+# 不需要同步我的 VScode ? 要不要同步呢
+.vscode/
