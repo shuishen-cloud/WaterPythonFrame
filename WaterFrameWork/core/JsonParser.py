@@ -34,6 +34,6 @@ if __name__ == "__main__":
 
     # * 将 Python 变量写为 Json 文件
     python_data_from_json["name"] = "lwf"
-    json_data_from_python = json.dumps(python_data_from_json)
+    json_data_from_python = json.dumps(python_data_from_json, ensure_ascii = False, indent = 4)
     print(json_data_from_python)
     
