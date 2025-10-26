@@ -10,4 +10,4 @@ venv/
 *.log
 
 # 不需要同步我的 VScode ? 要不要同步呢
-.vscode/
+.vscode/settings.json

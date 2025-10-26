@@ -10,6 +10,9 @@ Description:
 '''
 
 def test_core_func():
+    """
+    测试函数
+    """
     print("Hello from test_core_func!")
 
 def test_core_func2():
