@@ -19,6 +19,8 @@ if __name__ == "__main__":
     还有能够迅速地生成命令行，在一个模块下的 main 演示示例中
     """
 
+    # ============================ 设置命令行参数解析程序 ===========================
+
     argsPaser = argparse.ArgumentParser(description="这是一个命令行程序，来展示命令行解析")
     
     # 必选参数：
@@ -27,7 +29,9 @@ if __name__ == "__main__":
     # 可选参数
     argsPaser.add_argument("--verseble", type = bool, help = "命令执行回显是否可见")
     
-    # * 解析命令行参数
+
+    # ============================ 解析获取命令行参数 ===========================
+
     args = argsPaser.parse_args()
 
     input_file = args.input_file
