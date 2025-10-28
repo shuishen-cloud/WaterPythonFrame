@@ -30,6 +30,17 @@
         "reveal": "always"    // 始终显示输出面板
       },
       "problemMatcher": []    // 问题匹配器（用于捕获错误信息，可选）
-    }
+    },
+    {
+      "label": "直接启动当前文件",  // 任务唯一标识（必填）
+      "type": "shell",        // 任务类型（shell 或 process）
+      "command": "./venv/bin/python",    // 要执行的命令（如 python、node、gcc 等）
+      "args": ["${file}"],  // 命令参数（可选）
+      "group": "build",       // 任务分组（可选，如 build、test）
+      "presentation": {       // 任务输出显示配置（可选）
+        "reveal": "always"    // 始终显示输出面板
+      },
+      "problemMatcher": []    // 问题匹配器（用于捕获错误信息，可选）
+    }    
   ]
 }
