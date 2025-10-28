@@ -1,0 +1,7 @@
+{
+    "name":"lwy",
+    "age":20,
+    "is_student":false,
+    "hobbies":["reading", "coding"],
+    "address":null
+}
