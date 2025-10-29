@@ -14,6 +14,9 @@ import logging
 class WLogger():
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+
+        self.logger.setLevel(logging.DEBUG) # * 设置日志器本身的级别，处理器级别高于日志器就会显示
+
         self.console_handler = None
         self.file_handler = None
         self.formatter = logging.Formatter("%(asctime)s - %(filename)s:%(lineno)d - %(name)s - %(levelname)s - %(message)s")
@@ -44,8 +47,8 @@ class WLogger():
         return self.logger
     
     def get_file_logger(self) -> logging.Logger:
-        self.setFileHandler()
         self.get_defualt_logger()
+        self.setFileHandler()
         self.logger.addHandler(self.file_handler)
 
         return self.logger
