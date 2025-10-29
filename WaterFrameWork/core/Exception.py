@@ -9,7 +9,7 @@ Modified:  2025/10/27 Monday 21:03:20
 Description: a core module of my framework
 '''
 
-import functools
+import functools    # ? 我记得还有一种使用 functools 来实现装饰器
 from typing import Optional
 
 class WaterException(Exception):
@@ -23,18 +23,18 @@ class WaterException(Exception):
         """
         super().__init__(message)
 
-# @staticmethod   # * 静态方法，类内可以使用， 在 wrapper 函数中传入实例 self，必须显式传递
 def handle_error(default_error_return = False, error_handle = None, logger_info : Optional[str] = None):
     """
     异常处理装饰器，通过三层函数调用，来实现异常捕获，支持异常回调函数
     
     Args:
-        default_error_return(bool): 默认返回值，如果发生异常，则返回假
+        default_error_return(bool): 默认返回值：如果发生异常，则返回假
     """
+
     def decorator(func):
-        def wrapper(*args, **kwargs): # ! 这里的 self 必须显式传递
+        def wrapper(*args, **kwargs):
             try:
-                return func(*args, **kwargs)  # ! 这里的 self 必须显式传递
+                return func(*args, **kwargs)
             except Exception as e:                
                 print(f"decorator: 函数 {func.__name__} 发生异常：{e}")
                 print(logger_info)
@@ -45,7 +45,6 @@ def handle_error(default_error_return = False, error_handle = None, logger_info 
                 return default_error_return
         return wrapper
     return decorator
-
 
 if __name__ == "__main__":
     """
