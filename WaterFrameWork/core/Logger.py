@@ -69,6 +69,9 @@ if __name__ == "__main__":
     class_logger = class_logger.get_file_logger()
     class_logger.warning("这是来自 class info 的输出")
 
+    # test
+
+
     # ============================ 设置日志器格式 ===========================
 
     # logging.basicConfig(
