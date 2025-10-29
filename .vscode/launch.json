@@ -2,14 +2,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: 当前文件",  // 配置名称（可自定义）
+            "name": "Python 调试程序: 包含参数的当前文件",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",  // 调试当前打开的文件（也可指定固定入口，如 "${workspaceFolder}/main.py"）
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": "${command:pickArgs}"
+        },
+        {
+            "name": "Python: 当前文件", // 配置名称（可自定义）
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}", // 调试当前打开的文件（也可指定固定入口，如 "${workspaceFolder}/main.py"）
             "console": "integratedTerminal",
             // 关键：将项目根目录添加到 PYTHONPATH
             "env": {
-                "PYTHONPATH": "${workspaceFolder}"  // ${workspaceFolder} 表示 VS Code 打开的工作区根目录
+                "PYTHONPATH": "${workspaceFolder}" // ${workspaceFolder} 表示 VS Code 打开的工作区根目录
             }
         }
     ]
