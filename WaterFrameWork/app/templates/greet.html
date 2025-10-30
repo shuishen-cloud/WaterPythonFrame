@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>问候页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        form { margin: 20px 0; }
+        input { padding: 8px; margin-right: 10px; }
+        button { padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>问候功能</h1>
+    <form method="POST">
+        <label for="name">请输入你的名字：</label>
+        <input type="text" id="name" name="name" placeholder="你的名字">
+        <button type="submit">提交</button>
+    </form>
+
+    {% if name %}
+        <h3>你好，{{ name }}！😊</h3>
+    {% endif %}
+
+    <p><a href="/">返回首页</a></p>
+</body>
+</html>
