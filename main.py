@@ -9,7 +9,6 @@ Modified:  2025/10/29 Wednesday 19:44:14
 Description: the main entry of project
 '''
 
-import WaterFrameWork.core.Exception
 from WaterFrameWork.core.Logger import WLogger
 from WaterFrameWork.core.JsonParser import WJsonParser
 from WaterFrameWork.core.Exception import handle_error, WException
