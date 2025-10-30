@@ -12,7 +12,7 @@ Description:
 import json
 
 
-class JsonParser():
+class WJsonParser():
     """
     读取字符串比较简单，所以不需要封装，但是文件有 with 语法，也有多余需要注意的语法，需要封装。
     """
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     
     # ============================ 面向对象测试 ===========================
 
-    json_parser = JsonParser()
+    json_parser = WJsonParser()
     json_file_content = json_parser.load_from_json_file("tests/test.json")
     print(f"{json_file_content["name"]}")
     
