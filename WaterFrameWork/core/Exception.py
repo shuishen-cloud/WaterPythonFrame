@@ -9,10 +9,10 @@ Modified:  2025/10/27 Monday 21:03:20
 Description: a core module of my framework
 '''
 
-import functools    # ? 我记得还有一种使用 functools 来实现装饰器
+from functools import wraps   # ? 我记得还有一种使用 functools 来实现装饰器
 from typing import Optional
 
-class WaterException(Exception):
+class WException(Exception):
     """
     此框架的自定义异常
     """
@@ -32,15 +32,16 @@ def handle_error(default_error_return = False, error_handle = None, logger_info 
     """
 
     def decorator(func):
+        @wraps(func)  # 保留原函数信息
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
-            except Exception as e:                
-                print(f"decorator: 函数 {func.__name__} 发生异常：{e}")
-                print(logger_info)
+            except Exception as e: 
+                log = args[0] if args else None  # 从位置参数中取 log               
+                log.info(f"decorator: 函数 {func.__name__} 发生异常：{e}")
                 
                 if error_handle:
-                    error_handle()
+                    error_handle(log)
 
                 return default_error_return
         return wrapper
@@ -64,7 +65,7 @@ if __name__ == "__main__":
         """"
         用于测试异常装饰器的测试函数
         """
-        raise WaterException("raise WaterException: 装饰器异常测试触发")
+        raise WException("raise WaterException: 装饰器异常测试触发")
 
 
     # ============================ 异常测试部分 ===========================
@@ -76,8 +77,8 @@ if __name__ == "__main__":
         test_func()
         
         # 测试自建异常
-        raise WaterException("WaterException 异常发生")
-    except WaterException as e:
+        raise WException("WaterException 异常发生")
+    except WException as e:
         print(f"捕获了 WaterException 异常，异常消息是 {e}")
     finally:
         print("最终执行逻辑")
