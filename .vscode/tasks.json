@@ -10,10 +10,10 @@
   ],
   "tasks": [
     {
-      "label": "执行当前项目的测试文件",  // 任务唯一标识（必填）
+      "label": "执行当前项目的前端",  // 任务唯一标识（必填）
       "type": "shell",        // 任务类型（shell 或 process）
       "command": "./venv/bin/python",    // 要执行的命令（如 python、node、gcc 等）
-      "args": ["./tests/test_src.py"],  // 命令参数（可选）
+      "args": ["./WaterFrameWork/app/run.py"],  // 命令参数（可选）
       "group": "build",       // 任务分组（可选，如 build、test）
       "presentation": {       // 任务输出显示配置（可选）
         "reveal": "always"    // 始终显示输出面板

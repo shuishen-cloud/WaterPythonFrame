@@ -1,19 +1,42 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>简单 Flask 应用</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .links { margin: 20px 0; }
-        a { color: #007bff; text-decoration: none; margin-right: 15px; }
-        a:hover { text-decoration: underline; }
-    </style>
+    <meta charset="UTF-8" />
+    <title>Monaco Editor 示例</title>
+    <!-- 引入 Monaco Editor 的样式和脚本 -->
+    <!-- 
+        <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs/editor/editor.main.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs/loader.min.js"></script>
+        <script>
+            require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs' } });
+            require(['vs/editor/editor.main'], function () {
+                // 初始化编辑器
+                const editor = monaco.editor.create(document.getElementById('editor'), {
+                    value: `// 示例 C++ 代码
+                    #include <iostream>
+                        int main() {
+                            int a = 10;
+                            int* p = &a;
+                            std::cout << *p << std::endl;
+                            return 0;
+                        }`,
+                        language: 'cpp',
+                        theme: 'vs-dark',
+                        lineNumbers: 'on'
+                    });
+                });
+            </script>
+    -->
 </head>
+
 <body>
-    <h1>欢迎来到简单 Flask 应用</h1>
-    <div class="links">
-        <a href="/greet">去问候页面</a>
-    </div>
-    <p>这是一个包含基础功能的 Flask 示例，支持页面跳转、表单提交和数据存储。</p>
+  <!-- 编辑器容器 -->
+  <div id="editor" style="width: 800px; height: 600px;"></div>
+
+  <!-- 引用 Webpack 打包后的 JS 文件 -->
+  <script src="{{ url_for('static', filename='dist/editor.js') }}"></script>
 </body>
+
 </html>

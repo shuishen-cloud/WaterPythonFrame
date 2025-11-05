@@ -11,3 +11,7 @@ venv/
 
 # 不需要同步我的 VScode ? 要不要同步呢
 .vscode/settings.json
+
+# 前端
+node_modules/
+dist/
