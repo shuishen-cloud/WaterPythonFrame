@@ -11,8 +11,10 @@ Description: 启动 Flask 服务
 
 
 from flask import Flask, render_template, request, redirect, url_for
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # 首页路由
 @app.route('/')
@@ -28,6 +30,12 @@ def greet():
         return render_template('greet.html', name=name)
     # GET 请求时返回表单页面
     return render_template('greet.html')
+
+@app.route('/get_debugger_info', methods=['GET', 'POST'])
+def get_debugger_info():
+    if request.method == 'GET':
+        return "the string from flask_debugger"
+
 
 if __name__ == '__main__':
     app.run(debug=True)  # 调试模式启动（开发环境用）
