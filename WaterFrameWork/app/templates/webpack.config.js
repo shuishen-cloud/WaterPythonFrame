@@ -4,7 +4,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 module.exports = {
   entry: './editor.js', // 入口文件，根据实际项目调整
   output: {
-    path: path.resolve(__dirname, 'static/dist'),
+    path: path.resolve(__dirname, '../static/dist'),
     filename: 'editor.js'
   },
   module: {
