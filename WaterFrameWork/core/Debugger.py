@@ -35,29 +35,33 @@ def get_gdb_output(gdb : pexpect.spawn) -> str:
 if __name__ == "__main__":
 
     # TODO 路径需要修改，从 json/前端 获取
-    exe_path = "../../tests/test"
+    exe_path = "/home/lwy/project/WaterPythonFrameWork/tests/test_program"
     
-    gdb = pexpect.spawn(f"gdb {exe_path}")  # ! 怎么会没加载成功呢？
+    gdb = pexpect.spawn(f"gdb -q {exe_path}")  # ! 静默 GDB
+
+    # gdb.sendline("y")
+    gdb.expect(r"\(gdb\)")
     
-    # 0.1 infod 设置
+    gdb.sendline("b main")
+    print(get_gdb_output(gdb))
     gdb.sendline("y")
-    
-    # ! 这里在 ~/.gdbinit 中设置了 set debuginfod enabled off，禁止下载 debuginfod，减少检索失败的次数
-    # gdb.sendline(f"file {exe_path}")
+    print(get_gdb_output(gdb))
     gdb.expect(r"\(gdb\)")
 
-    # 1. 运行之前的工作 —— 设置断点为 21
-    gdb_expect_sendline(gdb, sendline = "break main")
-
-    # * 2. 开始调试代码
-    # gdb_expect_sendline(gdb, sendline = "run") # 这个需要额外的逻辑来处理
     gdb.sendline("run")
-    gdb.sendline("y")
-
-    # ! 这里还会有一个  `file` 捕获不到
-    gdb.sendline("y")
-
-    # ? 这里需不需要捕获 breakpoints 输出？
-
-    gdb_expect_sendline(gdb, sendline = "locals info")
     print(get_gdb_output(gdb))
+    # gdb.expect(r"\(session\)", timeout = 3)
+    
+    gdb.sendline("y")
+    gdb.expect(r"Breakpoint")
+
+    # ? 为什么最关键的一步总是出错呢？
+    gdb.expect(r"\(gdb\)")
+    gdb.sendline("info locals")
+    
+    print(get_gdb_output(gdb))
+
+    gdb.expect(r"\(gdb\)")
+    # print(get_gdb_output(gdb))
+    viriables = get_gdb_output(gdb)
+    print(f"变量列表：{viriables}") 
