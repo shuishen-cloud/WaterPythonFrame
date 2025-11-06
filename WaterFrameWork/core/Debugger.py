@@ -11,6 +11,7 @@ Description:
 
 
 import pexpect
+import re
 
 def gdb_expect_sendline(gdb : pexpect.spawn, expect = r"\(gdb\)", sendline = None, timout = 5):
     """
@@ -35,45 +36,52 @@ def get_gdb_output(gdb : pexpect.spawn) -> str:
 class Debugger():
     """
     gdb 的容器，用来封装 pexpect 和 gdb 的交互，装载进入 Flask
+
+    * 这里的重点是 GDB 的
     """
     def __init__(self):
-        pass
+        # TODO 路径需要修改，从 json/前端 获取
+        exe_path = "/home/lwy/project/WaterPythonFrameWork/tests/test_program"
+        
+        gdb = pexpect.spawn(f"gdb -q {exe_path}")  # ! 静默 GDB
+
+        # gdb.sendline("y")
+        gdb.sendline("set style enabled off");  # ! 关闭  gdb 色彩输出
+        gdb.expect(r"\(gdb\)")
+
+        gdb.expect(r"\(gdb\)")
+        
+        gdb.sendline("b main")
+        print(get_gdb_output(gdb))
+        # gdb.sendline("y")
+        print(get_gdb_output(gdb))
+        gdb.expect(r"\(gdb\)")
+
+        gdb.sendline("run")
+        print(get_gdb_output(gdb))
+        # gdb.expect(r"\(session\)", timeout = 3)
+        
+        gdb.sendline("y")
+        gdb.expect(r"Breakpoint")
+
+        # ? 为什么最关键的一步总是出错呢？
+        gdb.expect(r"\(gdb\)")
+        gdb.sendline("info locals")
+        
+        print(get_gdb_output(gdb))
+
+        gdb.expect(r"\(gdb\)")
+        
+        # * 获取的 info locals 进行处理，使之没有违法字符。
+        ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+        self.viriables = get_gdb_output(gdb)
+        self.viriables = ansi_escape.sub('',self.viriables )
+        self.viriables = self.viriables.replace('\r', '').split("\n")
+        
+        print(f"变量列表：{self.viriables}") 
     
     def get_debugger_info(self):
-        return "this is the variables list"
-
-
+        return self.viriables
 
 if __name__ == "__main__":
-
-    # TODO 路径需要修改，从 json/前端 获取
-    exe_path = "/home/lwy/project/WaterPythonFrameWork/tests/test_program"
-    
-    gdb = pexpect.spawn(f"gdb -q {exe_path}")  # ! 静默 GDB
-
-    # gdb.sendline("y")
-    gdb.expect(r"\(gdb\)")
-    
-    gdb.sendline("b main")
-    print(get_gdb_output(gdb))
-    gdb.sendline("y")
-    print(get_gdb_output(gdb))
-    gdb.expect(r"\(gdb\)")
-
-    gdb.sendline("run")
-    print(get_gdb_output(gdb))
-    # gdb.expect(r"\(session\)", timeout = 3)
-    
-    gdb.sendline("y")
-    gdb.expect(r"Breakpoint")
-
-    # ? 为什么最关键的一步总是出错呢？
-    gdb.expect(r"\(gdb\)")
-    gdb.sendline("info locals")
-    
-    print(get_gdb_output(gdb))
-
-    gdb.expect(r"\(gdb\)")
-    # print(get_gdb_output(gdb))
-    viriables = get_gdb_output(gdb)
-    print(f"变量列表：{viriables}") 
+    debugger = Debugger()
