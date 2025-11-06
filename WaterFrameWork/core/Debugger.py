@@ -41,7 +41,7 @@ class Debugger():
     """
     def __init__(self):
         # TODO 路径需要修改，从 json/前端 获取
-        exe_path = "/home/lwy/project/WaterPythonFrameWork/tests/test_program"
+        exe_path = "/home/lwy/project/WaterPythonFrameWork/tests/test_program2"
         
         gdb = pexpect.spawn(f"gdb -q {exe_path}")  # ! 静默 GDB
 
@@ -75,13 +75,47 @@ class Debugger():
         # * 获取的 info locals 进行处理，使之没有违法字符。
         ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
         self.viriables = get_gdb_output(gdb)
-        self.viriables = ansi_escape.sub('',self.viriables )
+        self.viriables = ansi_escape.sub('',self.viriables)
         self.viriables = self.viriables.replace('\r', '').split("\n")
         
-        print(f"变量列表：{self.viriables}") 
-    
+        print(f"* 变量列表：{self.viriables}\n")
+
+        # print(f"{get_gdb_output(gdb)}")
+        gdb.sendline("bt")
+        # print(f"{get_gdb_output(gdb)}")
+        gdb.expect(r"\(gdb\)")
+        print(f"{get_gdb_output(gdb)}")
+
+        gdb.sendline("s")
+        gdb.expect(r"\(gdb\)")
+        print(f"{get_gdb_output(gdb)}")
+
+        gdb.sendline("s")
+        gdb.expect(r"\(gdb\)")
+        print(f"{get_gdb_output(gdb)}")
+
+        gdb.sendline("s")
+        gdb.expect(r"\(gdb\)")
+        print(f"{get_gdb_output(gdb)}")
+
+        gdb.sendline("s")
+        gdb.expect(r"\(gdb\)")
+        print(f"{get_gdb_output(gdb)}")
+
+        gdb.sendline("bt")
+        gdb.expect(r"\(gdb\)")
+
+        self.stacktrace = get_gdb_output(gdb)
+        self.stacktrace = ansi_escape.sub('',self.stacktrace)
+        self.stacktrace = self.stacktrace.replace('\r', '').split("\n")
+        
+        print(f"* 栈帧调用：{self.stacktrace}\n")
+
     def get_debugger_info(self):
         return self.viriables
+    
+    def get_stacktrace_info(self):
+        return self.satcktrace
 
 if __name__ == "__main__":
     debugger = Debugger()
