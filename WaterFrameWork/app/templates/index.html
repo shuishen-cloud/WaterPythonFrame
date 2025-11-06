@@ -28,35 +28,115 @@
         font-size: 12px;
         opacity: 0.8;
     }
+
+    .editor-container {
+        display: grid;
+        grid-template-columns: 200px 1fr 300px;
+        /* 定义三列布局，工具栏和预览区域宽度固定，编辑区域占据剩余空间 */
+        grid-template-rows: auto 1fr;
+        /* 定义两行布局，第一行为工具栏，第二行为编辑和预览区域 */
+        height: 100vh;
+        /* 根据需要调整高度 */
+    }
+
+    .toolbar {
+        grid-column: 1 / -1;
+        /* 工具栏横跨所有列 */
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        /* 工具栏内分为四格 */
+        gap: 10px;
+        /* 格与格之间的间距 */
+        padding: 10px;
+        background-color: #f4f4f4;
+    }
+
+    .toolbar-item {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .edit-area {
+        grid-column: 2;
+        grid-row: 2;
+        background-color: #ffffff;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .preview-area {
+        grid-column: 3;
+        grid-row: 2;
+        background-color: #eaeaea;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        /* 当内容超出高度，允许滚动 */
+    }
+
+    .preview-section {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    }
 </style>
 
 <body>
     <!-- 编辑器容器 -->
-    <div id="editor" style="width: 800px; height: 600px;"></div>
-    <div id="step-btn">
-        <button>下一步</button>
+    <div id="editor-frame-container" class="editor-frame">
+        <!-- <div id="editor" style="width: 800px; height: 600px;"></div> -->
+
+        <!-- <div id="step-btn">
+            <button>下一步</button>
+        </div>
+
+        <div id="get-viriables" class="get-viriables">
+            <button onclick="fecthFlask()">获取变量列表</button>
+            <div id="viriables-container"></div>
+        </div> -->
     </div>
-    <div id="get_virables">
-        <button onclick="fecthFlask()">获取变量列表</button>
+
+    <div class="editor-container">
+        <div class="edit-area">编辑区域</div>
+        <!-- ! 核心， monaco 编辑器 -->
+        <div id="editor" class="edit-area"></div>
+        <div class="preview-area">
+            <div class="toolbar">
+                <div class="toolbar-item">
+                    <div id="step-btn">
+                        <button>下一步</button>
+                    </div>
+                </div>
+                <div id="get-viriables" class="toolbar-item">
+                    <button onclick="fecthFlask()">获取变量列表</button>
+                </div>
+            </div>
+            <div id="breakpoints" class="preview-section">断点列表</div>
+            <div id="viriables-container" class="preview-section">变量列表</div>
+            <div id="stacktrace-container" class="preview-section">栈帧调用</div>
+        </div>
     </div>
-    <div id="viriables-container"></div>
-    
+
+
     <!-- 引用 Webpack 打包后的 JS 文件 -->
     <script src="{{ url_for('static', filename='dist/editor.js') }}"></script>
     <script>
         // 向后端发送请求
         async function fecthFlask() {
             const container = document.getElementById("viriables-container");
-            
+
             try {
                 const response = await fetch("http://localhost:5000/get_debugger_info");
-                
+
                 if (!response.ok) throw new Error("请求失败");
-                
-                container.textContent =await response.text()
+
+                container.textContent = await response.text()
             } catch (error) {
                 container.textContent = "请求出错: ${error.message}";
-                container.style.color =  'red';
+                container.style.color = 'red';
             }
         }
     </script>
