@@ -32,6 +32,18 @@ def get_gdb_output(gdb : pexpect.spawn) -> str:
 
     return gdb.before.decode("utf-8").strip()
 
+class Debugger():
+    """
+    gdb 的容器，用来封装 pexpect 和 gdb 的交互，装载进入 Flask
+    """
+    def __init__(self):
+        pass
+    
+    def get_debugger_info(self):
+        return "this is the variables list"
+
+
+
 if __name__ == "__main__":
 
     # TODO 路径需要修改，从 json/前端 获取

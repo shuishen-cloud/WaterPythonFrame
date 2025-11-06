@@ -12,9 +12,13 @@ Description: 启动 Flask 服务
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_cors import CORS
+from WaterFrameWork.core.Debugger import Debugger
+
 
 app = Flask(__name__)
 CORS(app)
+
+debugger = Debugger()
 
 # 首页路由
 @app.route('/')
@@ -34,7 +38,8 @@ def greet():
 @app.route('/get_debugger_info', methods=['GET', 'POST'])
 def get_debugger_info():
     if request.method == 'GET':
-        return "the string from flask_debugger"
+        # return "the string from flask_debugger"
+        return debugger.get_debugger_info()
 
 
 if __name__ == '__main__':
