@@ -5,7 +5,7 @@ const editor = monaco.editor.create(document.getElementById('editor'), {
   value: `// 示例 C++ 代码
 #include <iostream>
 int main() {
-  int a = 10;
+  int sum = 0;
   int* p = &a;
   std::cout << *p << std::endl;
   return 0;
@@ -47,7 +47,10 @@ debugState.render = function () {
       }
     });
   });
-  
+
+  const breakpoints_container = document.getElementById("breakpoints")
+  breakpoints_container.textContent = Array.from(breakpoints)
+
   // 2. 渲染当前执行行（整行高亮）
   if (currentLine) {
     decorations.push({
@@ -91,7 +94,7 @@ editor.onMouseDown(event => {
 
   if (position.column === 1) { // 点击行首区域
     const lineNum = position.lineNumber - 1;
-    
+
     if (debugState.breakpoints.has(lineNum)) {
       debugState.breakpoints.delete(lineNum);
       console.log("断点关闭:" + lineNum)
@@ -99,7 +102,7 @@ editor.onMouseDown(event => {
       debugState.breakpoints.add(lineNum);
       console.log("断点添加:" + lineNum)
     }
-    
+
     debugState.render();
   }
 });
@@ -109,6 +112,24 @@ document.getElementById('step-btn').addEventListener('click', () => {
   // 模拟执行到下一行（实际需对接后端调试接口）
   const nextLine = debugState.currentLine ? debugState.currentLine + 1 : 3;
   
+  // * 获取栈帧调用
+  async function get_satcktrace_info() {
+    const container = document.getElementById("stacktrace-container");
+
+    try {
+      const response = await fetch("http://localhost:5000/get_stacktrace_info");
+
+      if (!response.ok) throw new Error("请求失败");
+
+      container.textContent = await response.text()
+    } catch (error) {
+      container.textContent = "请求出错: ${error.message}";
+      container.style.color = 'red';
+    }
+  }
+
+  get_satcktrace_info()
+
   debugState.update({
     currentLine: nextLine,
     lineData: {

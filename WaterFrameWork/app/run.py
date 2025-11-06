@@ -39,7 +39,12 @@ def greet():
 def get_debugger_info():
     if request.method == 'GET':
         # return "the string from flask_debugger"
-        return debugger.get_debugger_info()
+        return debugger.viriables
+
+@app.route('/get_stacktrace_info', methods=['GET', 'POST'])
+def get_stacktrace_info():
+    if request.method == 'GET':
+        return debugger.stacktrace
 
 
 if __name__ == '__main__':
