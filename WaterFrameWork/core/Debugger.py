@@ -24,6 +24,7 @@ class GdbCommand():
     stacktrace = "bt"
     step = "s"
     yes = "y"
+    viriables = "info locals"
 
 class Debugger():
     """
@@ -40,6 +41,7 @@ class Debugger():
         self.breakpoints = None
         self.viriables = None
         self.stacktrace = None
+        self.currunt_line = None
 
         # TODO 代码内容可能来自前端，前端需要先将代码 POST 到后端，后端建立临时文件
         self.exe_path = "/home/lwy/project/WaterPythonFrameWork/tests/test_program2"
@@ -55,11 +57,13 @@ class Debugger():
 
         gdb.expect(r"\(gdb\)")
         
+        print("* 在主函数处打断点 b main")
         gdb.sendline("b main")
         print(self.get_gdb_output())
         # .sendline("y")
         gdb.expect(r"\(gdb\)")
-
+        
+        print("* 开始运行 run")
         gdb.sendline("run")
         print(self.get_gdb_output())
         # gdb.expect(r"\(session\)", timeout = 3)
@@ -67,6 +71,7 @@ class Debugger():
         gdb.sendline("y")
         gdb.expect(r"Breakpoint")
 
+        print("* 获取变量值 info locals")
         # ? 为什么最关键的一步总是出错呢？
         gdb.expect(r"\(gdb\)")
         gdb.sendline("info locals")
@@ -117,6 +122,17 @@ class Debugger():
 
         return processed_gdb_output
     
+    def get_currunt_line(self, n_command_content):
+        """
+        获取当前正在调试的代码行数，通过 n 或者 s 命令的回显，否则无效
+
+        ! 在使用时要注意传入的参数是否真的是代码内容
+        """
+        
+        get_line_num = re.match(r"^\d+", n_command_content) # 只匹配行首的数字
+        
+        return get_line_num.group()
+        
     def _test_gdb(self):
         """
         完成危险初始化之后对于 gdb 的检测
@@ -131,7 +147,13 @@ class Debugger():
         # 对于我的代码而言，循环五次可以到一个函数调用，看到栈帧之间的切换
         for i in range(5):
             self.gdb_expect_sendline(GdbCommand.step)
-            print(f"{self.get_gdb_output()}")
+            next_content = self.get_gdb_output()
+            print(f"{next_content}")
+
+            # * 获取代码行数
+            processed_next_content = self.process_gdb_output(next_content)
+            self.currunt_line = self.get_currunt_line(processed_next_content[-2])
+            print(f"* 当前代码行数: {self.currunt_line}")   # *! 始终获取最后倒数第二个元素（是代码信息），倒数第一个是空值
 
         self.gdb_expect_sendline(GdbCommand.stacktrace)
         self.stacktrace = self.process_gdb_output(self.get_gdb_output())
