@@ -50,13 +50,13 @@ def post_breakpoints():
     front_breakpoints = request.get_json()
     print(f"* 断点列表：{front_breakpoints}")
     debugger.breakpoints = front_breakpoints
-
+    print(f"* 解析之后的断点列表: {debugger.breakpoints}")
     return jsonify({"code":"back end get breakpoints list"})
 
 @app.route('/get_currunt_line', methods=['GET'])
 def get_currunt_line():
         # TODO 这里需要写 debugger.currrunt_line
-        return jsonify({"curruntline": 5})
+        return jsonify({"curruntline": debugger.currunt_line})
 
 
 if __name__ == '__main__':

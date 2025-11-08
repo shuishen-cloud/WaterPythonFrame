@@ -12,7 +12,7 @@ TODO 将大部分的命令使用 GdbCommand 来标准化，最后直接限定参
 
 import pexpect
 import re
-
+import asyncio
 class GdbCommand():
     """    
     将会用到的 GDB 的命令封装成为类，易读，也更容易控制
@@ -53,32 +53,31 @@ class Debugger():
         gdb = self.gdb
 
         # gdb.sendline("y")
-        gdb.expect(r"\(gdb\)")
+        gdb.expect(r"\(gdb\)", timeout = 3)
 
-        gdb.expect(r"\(gdb\)")
+        gdb.expect(r"\(gdb\)", timeout = 3)
         
         print("* 在主函数处打断点 b main")
         gdb.sendline("b main")
         print(self.get_gdb_output())
         # .sendline("y")
-        gdb.expect(r"\(gdb\)")
+        gdb.expect(r"\(gdb\)", timeout = 3)
         
         print("* 开始运行 run")
         gdb.sendline("run")
         print(self.get_gdb_output())
         # gdb.expect(r"\(session\)", timeout = 3)
         
-        gdb.sendline("y")
-        gdb.expect(r"Breakpoint")
+        gdb.expect(r"Breakpoint", timeout = 3)
 
         print("* 获取变量值 info locals")
         # ? 为什么最关键的一步总是出错呢？
-        gdb.expect(r"\(gdb\)")
+        gdb.expect(r"\(gdb\)", timeout = 3)
         gdb.sendline("info locals")
         
         print(self.get_gdb_output())
 
-        gdb.expect(r"\(gdb\)")
+        gdb.expect(r"\(gdb\)", timeout = 3)
         
         # ! 此后部分脱离危险性，启动测试代码
         self._test_gdb()
@@ -132,7 +131,23 @@ class Debugger():
         get_line_num = re.match(r"^\d+", n_command_content) # 只匹配行首的数字
         
         return get_line_num.group()
-        
+
+    # ! 这两个异步方法没能成功
+    async def get_front_breaklists(self):
+        """
+        获取前端传来的断点，并将其设置
+        """
+        print("异步代码开始执行")
+        asyncio.create_task(self.read_front_breaklists())  # 前端列表传来断点的时间不确定，所以要使用异步函数
+    
+    async def read_front_breaklists(self):
+        while(True):
+            if self.breakpoints != None and self.breakpoints:
+                print(f"异步函数执行")
+                for each_breakpoint in self.breakpoints:
+                    print(each_breakpoint)
+            await asyncio.sleep(0.1)
+
     def _test_gdb(self):
         """
         完成危险初始化之后对于 gdb 的检测
@@ -143,6 +158,8 @@ class Debugger():
         # * 获取的 info locals 进行处理，使之没有违法字符。
         self.viriables = self.process_gdb_output(self.get_gdb_output())
         print(f"* 变量列表：{self.viriables}\n")
+        
+        # asyncio.run(self.get_front_breaklists()) # ! 异步获取失败，不过似乎也没有更好的方法了
 
         # 对于我的代码而言，循环五次可以到一个函数调用，看到栈帧之间的切换
         for i in range(5):
