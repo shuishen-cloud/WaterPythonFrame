@@ -1,4 +1,17 @@
+/*
+ * Filename:  editor.js
+ * Project:   templates
+ * Author:    lwy
+ * ***
+ * Created:   2025/11/07 Friday 20:18:09
+ * Modified:  2025/11/07 Friday 20:22:10
+ * ***
+ * Description: 核心编辑器组件
+ */
+
 import * as monaco from 'monaco-editor';
+import { get_from_back_to_container, get_from_back_to_vriable, post_to_back } from "./utils";
+
 
 // 初始化 Monaco Editor
 const editor = monaco.editor.create(document.getElementById('editor'), {
@@ -48,8 +61,12 @@ debugState.render = function () {
     });
   });
 
+  // 在工具栏显式断点列表
   const breakpoints_container = document.getElementById("breakpoints")
   breakpoints_container.textContent = Array.from(breakpoints)
+  
+  // ! 将断点列表以 JSON 发送到后端
+  post_to_back("post_breakpoints", JSON.stringify(Array.from(breakpoints)))
 
   // 2. 渲染当前执行行（整行高亮）
   if (currentLine) {
@@ -102,34 +119,22 @@ editor.onMouseDown(event => {
       debugState.breakpoints.add(lineNum);
       console.log("断点添加:" + lineNum)
     }
-
+    
     debugState.render();
   }
 });
 
 // 2. 模拟调试控制（下一步、继续执行）
 document.getElementById('step-btn').addEventListener('click', () => {
-  // 模拟执行到下一行（实际需对接后端调试接口）
-  const nextLine = debugState.currentLine ? debugState.currentLine + 1 : 3;
+  // 执行到下一行 
   
-  // * 获取栈帧调用
-  async function get_satcktrace_info() {
-    const container = document.getElementById("stacktrace-container");
+  // * 当前行数的初始化
+  const nextLine = debugState.currentLine ? debugState.currentLine + 1 : get_from_back_to_vriable("get_currunt_line","another-container").then(data => {debugState.currentLine = data["curruntline"]});
 
-    try {
-      const response = await fetch("http://localhost:5000/get_stacktrace_info");
-
-      if (!response.ok) throw new Error("请求失败");
-
-      container.textContent = await response.text()
-    } catch (error) {
-      container.textContent = "请求出错: ${error.message}";
-      container.style.color = 'red';
-    }
-  }
-
-  get_satcktrace_info()
-
+  // * 获取变量列表和栈帧调用并显示到容器上
+  get_from_back_to_container("get_stacktrace_info", "stacktrace-container")
+  get_from_back_to_container("get_debugger_info", "viriables-container")
+  
   debugState.update({
     currentLine: nextLine,
     lineData: {

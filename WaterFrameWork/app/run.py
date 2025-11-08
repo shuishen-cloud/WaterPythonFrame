@@ -10,7 +10,7 @@ Description: 启动 Flask 服务
 '''
 
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_cors import CORS
 from WaterFrameWork.core.Debugger import Debugger
 
@@ -35,16 +35,28 @@ def greet():
     # GET 请求时返回表单页面
     return render_template('greet.html')
 
-@app.route('/get_debugger_info', methods=['GET', 'POST'])
+@app.route('/get_debugger_info', methods=['GET'])
 def get_debugger_info():
     if request.method == 'GET':
-        # return "the string from flask_debugger"
         return debugger.viriables
 
-@app.route('/get_stacktrace_info', methods=['GET', 'POST'])
+@app.route('/get_stacktrace_info', methods=['GET'])
 def get_stacktrace_info():
     if request.method == 'GET':
         return debugger.stacktrace
+
+@app.route('/post_breakpoints', methods=['POST'])
+def post_breakpoints():
+    front_breakpoints = request.get_json()
+    print(f"* 断点列表：{front_breakpoints}")
+    debugger.breakpoints = front_breakpoints
+
+    return jsonify({"code":"back end get breakpoints list"})
+
+@app.route('/get_currunt_line', methods=['GET'])
+def get_currunt_line():
+        # TODO 这里需要写 debugger.currrunt_line
+        return jsonify({"curruntline": 5})
 
 
 if __name__ == '__main__':

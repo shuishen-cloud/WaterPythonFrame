@@ -1,3 +1,14 @@
+<!--
+Filename:  index.html
+Project:   templates
+Author:    lwy
+***
+Created:   2025/11/06 Thursday 19:00:41
+Modified:  2025/11/07 Friday 20:21:58
+***
+Description: 
+-->
+
 <!DOCTYPE html>
 <html>
 
@@ -77,69 +88,34 @@
     }
 
     .preview-section {
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    box-sizing: border-box;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        box-sizing: border-box;
     }
 </style>
 
 <body>
-    <!-- 编辑器容器 -->
-    <div id="editor-frame-container" class="editor-frame">
-        <!-- <div id="editor" style="width: 800px; height: 600px;"></div> -->
-
-        <!-- <div id="step-btn">
-            <button>下一步</button>
-        </div>
-
-        <div id="get-viriables" class="get-viriables">
-            <button onclick="fecthFlask()">获取变量列表</button>
-            <div id="viriables-container"></div>
-        </div> -->
-    </div>
-
     <div class="editor-container">
-        <div class="edit-area">编辑区域</div>
         <!-- ! 核心， monaco 编辑器 -->
         <div id="editor" class="edit-area"></div>
         <div class="preview-area">
             <div class="toolbar">
                 <div class="toolbar-item">
-                    <div id="step-btn">
+                    <div id="step-btn">    <!-- step-btn 和 editor.js 中的函数绑定在一起-->
                         <button>下一步</button>
                     </div>
-                </div>
-                <div id="get-viriables" class="toolbar-item">
-                    <button onclick="fecthFlask()">获取变量列表</button>
                 </div>
             </div>
             <div id="breakpoints" class="preview-section">断点列表</div>
             <div id="viriables-container" class="preview-section">变量列表</div>
             <div id="stacktrace-container" class="preview-section">栈帧调用</div>
+            <div id="another-container" class="preview-section">杂乱的变量（因为封装的问题）</div>
         </div>
     </div>
 
-
     <!-- 引用 Webpack 打包后的 JS 文件 -->
     <script src="{{ url_for('static', filename='dist/editor.js') }}"></script>
-    <script>
-        // 向后端发送请求
-        async function fecthFlask() {
-            const container = document.getElementById("viriables-container");
-
-            try {
-                const response = await fetch("http://localhost:5000/get_debugger_info");
-
-                if (!response.ok) throw new Error("请求失败");
-
-                container.textContent = await response.text()
-            } catch (error) {
-                container.textContent = "请求出错: ${error.message}";
-                container.style.color = 'red';
-            }
-        }
-    </script>
 </body>
 
 </html>
