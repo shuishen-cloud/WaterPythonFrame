@@ -73,9 +73,9 @@ const debugState = {
 debugState.render = function () {
 	const decorations = [];
 	const { currentLine, breakpoints, lineData } = this;
-	
+
 	// * 清空之前的残留装饰
-	if(debugState.decorationIds) editor.deltaDecorations(debugState.decorationIds, []);
+	if (debugState.decorationIds) editor.deltaDecorations(debugState.decorationIds, []);
 
 	// 1. 渲染断点（行号左侧红点）
 	console.log(breakpoints);
@@ -157,7 +157,7 @@ document.getElementById('step-btn').addEventListener('click', () => {
 	// 执行到下一行 
 
 	// * 获取当前行数
-	get_from_back_to_vriable("get_currunt_line","another-container").then(data => {debugState.currentLine = data["curruntline"]});
+	get_from_back_to_vriable("get_currunt_line", "another-container").then(data => { debugState.currentLine = data["curruntline"] });
 	// ! 将其转化为数字
 	const nextLine = Number(debugState.currentLine)
 

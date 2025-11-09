@@ -13,109 +13,112 @@ Description:
 <html>
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Monaco Editor</title>
+	<meta charset="UTF-8" />
+	<title>Monaco Editor</title>
 </head>
 
 <style>
-    /* 断点红点 */
-    .custom-breakpoint {
-        background-color: #ff4444;
-        border-radius: 50%;
-        width: 12px;
-        height: 12px;
-        margin: 2px auto;
-    }
+	/* 断点红点 */
+	.custom-breakpoint {
+		background-color: #ff4444;
+		border-radius: 50%;
+		width: 12px;
+		height: 12px;
+		margin: 2px auto;
+	}
 
-    /* 当前执行行高亮 */
-    .custom-current-line {
-        background-color: rgba(255, 215, 0, 0.2);
-        border-left: 3px solid #ffd700;
-    }
+	/* 当前执行行高亮 */
+	.custom-current-line {
+		background-color: rgba(255, 215, 0, 0.2);
+		border-left: 3px solid #ffd700;
+	}
 
-    /* 变量提示 */
-    .custom-variable-hint {
-        color: #66cc99;
-        font-size: 12px;
-        opacity: 0.8;
-    }
+	/* 变量提示 */
+	.custom-variable-hint {
+		color: #66cc99;
+		font-size: 12px;
+		opacity: 0.8;
+	}
 
-    .editor-container {
-        display: grid;
-        grid-template-columns: 200px 1fr 300px;
-        /* 定义三列布局，工具栏和预览区域宽度固定，编辑区域占据剩余空间 */
-        grid-template-rows: auto 1fr;
-        /* 定义两行布局，第一行为工具栏，第二行为编辑和预览区域 */
-        height: 100vh;
-        /* 根据需要调整高度 */
-    }
+	.editor-container {
+		display: grid;
+		grid-template-columns: 200px 1fr 300px;
+		/* 定义三列布局，工具栏和预览区域宽度固定，编辑区域占据剩余空间 */
+		grid-template-rows: auto 1fr;
+		/* 定义两行布局，第一行为工具栏，第二行为编辑和预览区域 */
+		height: 100vh;
+		/* 根据需要调整高度 */
+	}
 
-    .toolbar {
-        grid-column: 1 / -1;
-        /* 工具栏横跨所有列 */
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        /* 工具栏内分为四格 */
-        gap: 10px;
-        /* 格与格之间的间距 */
-        padding: 10px;
-        background-color: #f4f4f4;
-    }
+	.toolbar {
+		grid-column: 1 / -1;
+		/* 工具栏横跨所有列 */
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		/* 工具栏内分为四格 */
+		gap: 10px;
+		/* 格与格之间的间距 */
+		padding: 10px;
+		background-color: #f4f4f4;
+	}
 
-    .toolbar-item {
-        background-color: #ffffff;
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: center;
-    }
+	.toolbar-item {
+		background-color: #ffffff;
+		border: 1px solid #ccc;
+		padding: 10px;
+		text-align: center;
+	}
 
-    .edit-area {
-        grid-column: 2;
-        grid-row: 2;
-        background-color: #ffffff;
-        padding: 20px;
-        box-sizing: border-box;
-    }
+	.edit-area {
+		grid-column: 2;
+		grid-row: 2;
+		background-color: #ffffff;
+		padding: 20px;
+		box-sizing: border-box;
+	}
 
-    .preview-area {
-        grid-column: 3;
-        grid-row: 2;
-        background-color: #eaeaea;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-y: auto;
-        /* 当内容超出高度，允许滚动 */
-    }
+	.preview-area {
+		grid-column: 3;
+		grid-row: 2;
+		background-color: #eaeaea;
+		padding: 20px;
+		box-sizing: border-box;
+		overflow-y: auto;
+		/* 当内容超出高度，允许滚动 */
+	}
 
-    .preview-section {
-        background-color: #ffffff;
-        border: 1px solid #ccc;
-        padding: 10px;
-        box-sizing: border-box;
-    }
+	.preview-section {
+		background-color: #ffffff;
+		border: 1px solid #ccc;
+		padding: 10px;
+		box-sizing: border-box;
+	}
 </style>
 
 <body>
-    <div class="editor-container">
-        <!-- ! 核心， monaco 编辑器 -->
-        <div id="editor" class="edit-area"></div>
-        <div class="preview-area">
-            <div class="toolbar">
-                <div class="toolbar-item">
-                    <div id="step-btn">    <!-- step-btn 和 editor.js 中的函数绑定在一起-->
-                        <button>下一步</button>
-                    </div>
-                </div>
-            </div>
-            <div id="breakpoints" class="preview-section">断点列表</div>
-            <div id="viriables-container" class="preview-section">变量列表</div>
-            <div id="stacktrace-container" class="preview-section">栈帧调用</div>
-            <div id="another-container" class="preview-section">杂乱的变量（因为封装的问题）</div>
-        </div>
-    </div>
+	<div class="editor-container">
+		<!-- ! 核心， monaco 编辑器 -->
+		<div id="editor" class="edit-area"></div>
+		<div class="preview-area">
+			<div class="toolbar">
+				<div class="toolbar-item">
+					<div id="step-btn"> <!-- step-btn 和 editor.js 中的函数绑定在一起-->
+						<button>下一步</button>
+					</div>
+				</div>
+			</div>
+			<div id="breakpoints" class="preview-section">断点列表</div>
+			<div id="viriables-container" class="preview-section">变量列表</div>
+			<div id="stacktrace-container" class="preview-section">栈帧调用</div>
+			<div id="memeory-display" class="preview-section">内存分布图
+				<canvas id="memeory-display-canvas" width="200" height="100" style="border:1px solid #d3d3d3;"></canvas>
+			</div>
+			<div id="another-container" class="preview-section">杂乱的变量（因为封装的问题）</div>
+		</div>
+	</div>
 
-    <!-- 引用 Webpack 打包后的 JS 文件 -->
-    <script src="{{ url_for('static', filename='dist/editor.js') }}"></script>
+	<!-- 引用 Webpack 打包后的 JS 文件 -->
+	<script src="{{ url_for('static', filename='dist/editor.js') }}"></script>
 </body>
 
 </html>
