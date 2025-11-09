@@ -10,7 +10,7 @@
  */
 
 import * as monaco from 'monaco-editor';
-import { get_from_back_to_container, get_from_back_to_vriable, post_to_back } from "./utils";
+import { get_from_back_to_container, get_from_back_to_vriable, post_to_back, memory_display } from "./utils";
 
 
 // 初始化 Monaco Editor
@@ -57,6 +57,8 @@ const debugState = {
 	currentLine: null, // 当前执行行（如 3）
 	breakpoints: new Set(), // 断点行（如 Set(3,5)）
 	lineData: {}, // 每行额外数据（如变量值）：{3: { variables: { a: 10, p: '0x7fffffffde40' } }}
+	decorationIds: null,	// 当前的装饰，是一个字符串数组
+
 	// 更新状态的方法
 	update: function (data) {
 		Object.assign(this, data);
@@ -71,6 +73,9 @@ const debugState = {
 debugState.render = function () {
 	const decorations = [];
 	const { currentLine, breakpoints, lineData } = this;
+	
+	// * 清空之前的残留装饰
+	if(debugState.decorationIds) editor.deltaDecorations(debugState.decorationIds, []);
 
 	// 1. 渲染断点（行号左侧红点）
 	console.log(breakpoints);
@@ -120,7 +125,7 @@ debugState.render = function () {
 	}
 
 	// ! 应用所有装饰器（实时更新DOM）
-	const decorationIds = editor.deltaDecorations([], decorations);
+	debugState.decorationIds = editor.deltaDecorations([], decorations);
 };
 
 // 1. 点击行号左侧添加/移除断点
@@ -128,8 +133,8 @@ editor.onMouseDown(event => {
 	// const position = editor.getPosition(event.event.offsetX, event.event.offsetY);
 	// ! 首先确定鼠标到底能否检测到点击
 	const position = editor.getPosition({
-		x: event.event.posx,  // 相对于视口的X坐标
-		y: event.event.posy   // 相对于视口的Y坐标
+		x: event.event.posx,
+		y: event.event.posy
 	});
 
 	if (position.column === 1) { // 点击行首区域
@@ -151,9 +156,10 @@ editor.onMouseDown(event => {
 document.getElementById('step-btn').addEventListener('click', () => {
 	// 执行到下一行 
 
-	// * 当前行数的初始化
-	// const nextLine = debugState.currentLine ? debugState.currentLine + 1 : get_from_back_to_vriable("get_currunt_line","another-container").then(data => {debugState.currentLine = data["curruntline"]});
-	const nextLine = debugState.currentLine ? debugState.currentLine + 1 : 19;    // TODO 后端行数可以报出来，但是为什么不能更新呢？
+	// * 获取当前行数
+	get_from_back_to_vriable("get_currunt_line","another-container").then(data => {debugState.currentLine = data["curruntline"]});
+	// ! 将其转化为数字
+	const nextLine = Number(debugState.currentLine)
 
 	// ! 执行后端的下一步
 	get_from_back_to_container("step", "another-container")
@@ -165,7 +171,7 @@ document.getElementById('step-btn').addEventListener('click', () => {
 	debugState.update({
 		currentLine: nextLine,
 		lineData: {
-			[nextLine]: { variables: { a: 10, p: '0x7fffffffde40', '*p': 10 } } // 模拟后端返回的变量数据
+			[nextLine]: { variables: { a: 10, p: '0x7fffffffde40', '*p': 10 } }
 		}
 	});
 });

@@ -62,3 +62,7 @@ export async function post_to_back(curl_name, body_message = JSON.stringify({ ke
         console.error("Error:", error);
     }
 }
+
+export function memory_display() {
+	
+}

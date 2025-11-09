@@ -139,6 +139,9 @@ class Debugger():
         # * 执行 GDB 的 step 命令，并消费此次缓冲
         self.gdb_expect_sendline(GdbCommand.step);
         next_content = self.get_gdb_output()
+        # * - 获取代码行数
+        processed_next_content = self.process_gdb_output(next_content)
+        self.currunt_line = self.get_currunt_line(processed_next_content[-2])
         
         # * 更新 viribales
         self.gdb_expect_sendline(GdbCommand.viriables)
