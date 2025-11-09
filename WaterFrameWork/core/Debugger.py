@@ -132,6 +132,24 @@ class Debugger():
         
         return get_line_num.group()
 
+    def step(self):
+        """
+        执行后端 GDB 的中 step 命令，更新类内维护的变量列表和栈帧调用列表，需要前端来调用
+        """
+        # * 执行 GDB 的 step 命令，并消费此次缓冲
+        self.gdb_expect_sendline(GdbCommand.step);
+        next_content = self.get_gdb_output()
+        
+        # * 更新 viribales
+        self.gdb_expect_sendline(GdbCommand.viriables)
+        next_content = self.get_gdb_output()
+        self.viriables = self.process_gdb_output(next_content)
+
+        # * 更新栈帧
+        self.gdb_expect_sendline(GdbCommand.stacktrace)
+        next_content = self.get_gdb_output()
+        self.stacktrace = self.process_gdb_output(next_content)
+
     # ! 这两个异步方法没能成功
     async def get_front_breaklists(self):
         """
