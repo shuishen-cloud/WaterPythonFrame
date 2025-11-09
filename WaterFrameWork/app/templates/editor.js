@@ -168,6 +168,9 @@ document.getElementById('step-btn').addEventListener('click', () => {
 	get_from_back_to_container("get_stacktrace_info", "stacktrace-container")
 	get_from_back_to_container("get_debugger_info", "viriables-container")
 
+	// 绘制内存分布图
+	memory_display();
+
 	debugState.update({
 		currentLine: nextLine,
 		lineData: {
