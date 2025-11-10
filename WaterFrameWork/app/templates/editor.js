@@ -10,7 +10,7 @@
  */
 
 import * as monaco from 'monaco-editor';
-import { get_from_back_to_container, get_from_back_to_vriable, post_to_back, memory_display } from "./utils";
+import { get_from_back, post_to_back, memory_display } from "./utils";
 
 
 // 初始化 Monaco Editor
@@ -55,6 +55,7 @@ int main(void){
 // 调试状态管理器
 const debugState = {
 	currentLine: null, // 当前执行行（如 3）
+	nextLine: null,
 	breakpoints: new Set(), // 断点行（如 Set(3,5)）
 	lineData: {}, // 每行额外数据
 	decorationIds: null,	// 当前的装饰，是一个字符串数组
@@ -77,7 +78,6 @@ debugState.render = function () {
 	if (debugState.decorationIds) editor.deltaDecorations(debugState.decorationIds, []);
 
 	// 1. 渲染断点（行号左侧红点）
-	console.log(breakpoints);
 	breakpoints.forEach(lineNum => {
 		decorations.push({
 			range: new monaco.Range(lineNum, 1, lineNum, 1), // 行首位置
@@ -141,10 +141,8 @@ editor.onMouseDown(event => {
 
 		if (debugState.breakpoints.has(lineNum)) {
 			debugState.breakpoints.delete(lineNum);
-			console.log("断点关闭:" + lineNum)
 		} else {
 			debugState.breakpoints.add(lineNum);
-			console.log("断点添加:" + lineNum)
 		}
 
 		debugState.render();
@@ -153,27 +151,23 @@ editor.onMouseDown(event => {
 
 // 2. 模拟调试控制（下一步、继续执行）
 document.getElementById('step-btn').addEventListener('click', () => {
-	// 执行到下一行 
-
 	// * 获取当前行数
-	get_from_back_to_vriable("get_currunt_line", "another-container").then(data => { debugState.currentLine = data["curruntline"] });
-	// ! 将其转化为数字，这里 fetch 请求的异步解析有问题
-	const nextLine = Number(debugState.currentLine)
-
+	get_from_back("get_currunt_line").then(data => { debugState.nextLine = Number(data["curruntline"]) });
+	
 	// * 执行后端的下一步
-	get_from_back_to_container("step", "another-container")
+	get_from_back("step")
 
 	// * 获取变量列表和栈帧调用并显示到容器上
-	get_from_back_to_container("get_stacktrace_info", "stacktrace-container")
-	get_from_back_to_container("get_debugger_info", "viriables-container")
+	get_from_back("get_stacktrace_info", "stacktrace-container")
+	get_from_back("get_debugger_info", "viriables-container")
 
-	// 绘制内存分布图
+	// * 绘制内存分布图
 	memory_display();
 
 	debugState.update({
-		currentLine: nextLine,
-		lineData: {
-			[nextLine]: { variables: { a: 10, p: '0x7fffffffde40', '*p': 10 } }
-		}
+		currentLine: debugState.nextLine,
+		// lineData: {
+		// 	[debugState.nextLine]: { variables: { a: 10, p: '0x7fffffffde40', '*p': 10 } }
+		// }
 	});
 });

@@ -20,28 +20,23 @@ export async function get_from_back_to_container(curl_name, container_name) {
 		const response = await fetch("http://localhost:5000/" + curl_name);
 		if (!response.ok) throw new Error("请求失败");
 
-		container.textContent = await response.text()
+		container.textContent = await response.text();
 	} catch (error) {
-		container.textContent = "请求出错: ${error.message}";
+		container.textContent = `请求出错: ${error.message}`;
 		container.style.color = 'red';
 	}
 }
 
-export async function get_from_back_to_vriable(curl_name, container_name) {
-	const container = document.getElementById(container_name);
-
+export async function get_from_back_to_vriable(curl_name) {
 	try {
 		const response = await fetch("http://localhost:5000/" + curl_name);
 		if (!response.ok) throw new Error("请求失败");
 
-		const response_json = await response.json()
+		const response_json = await response.json();
 
-		container.textContent = JSON.stringify(response_json)
-
-		return response_json
+		return response_json;
 	} catch (error) {
-		container.textContent = "请求出错: ${error.message}";
-		container.style.color = 'red';
+		console.log(`请求出错: ${error.message}`);
 	}
 }
 
@@ -57,21 +52,38 @@ export async function post_to_back(curl_name, body_message = JSON.stringify({ ke
 
 		if (!response.ok) throw new Error("POST 请求失败 $ {response.statusText} ");
 		const data = await response.json();
-		console.log("Success:", data);
+		console.log("请求成功:", data);
 	} catch (error) {
-		console.error("Error:", error);
+		console.error("请求出错:", error);
 	}
 }
 
-export function memory_display(stack_info, viriables_info) {
-	/*首先声明一个列表，列表的元素是栈帧信息（尤其是栈的地址）以及里边的变量，
-	 根据元素的 数目+1 来切割整个 `canvas` 绘图区，最顶层正在执行的栈分配两个绘图区以彰显其正在运行和展示变量信息。
-	
-	# example args value
-	- stack_info = ["#0 test () at ../../tests/test_program2.cpp:18", "#1 0x0000555555555172 in main () at ../../tests/test_program2.cpp:24"]
-	- viriables_info = ["sum = -137699088", "p = 0x7fffffffdc30"]
-	*/
+/**
+ * 获取后端的信息并且选择赋值为变量还是显示在 div 上
+ * @param {string} curl_name 后端的接口字段
+ * @param {string} container_name 容器的 id
+ * @returns 若使用获取到变量，则返回需要构造的变量
+ * @todo 是不是将这两个方法的代码直接合并在一起也不错？
+ */
+export async function get_from_back(curl_name, container_name){
+	if(arguments.length == 1){
+		const variable = get_from_back_to_vriable(curl_name);
+		return variable;
+	}else if(arguments.length == 2){
+		const container = get_from_back_to_container(curl_name, container_name);
+	}
+}
 
+/**
+ * 在指定的 canvas_div 中渲染内存分布图
+ * @param {*} stack_info 栈帧调用信息
+ * @param {*} viriables_info 变量信息
+ * @description 首先声明一个列表，列表的元素是栈帧信息（尤其是栈的地址）以及里边的变量，根据元素的 数目+1 来切割整个 `canvas` 绘图区，最顶层正在执行的栈分配两个绘图区以彰显其正在运行和展示变量信息。
+ * @example
+	stack_info = ["#0 test () at ../../tests/test_program2.cpp:18", "#1 0x0000555555555172 in main () at ../../tests/test_program2.cpp:24"]
+	viriables_info = ["sum = -137699088", "p = 0x7fffffffdc30"]
+ */
+export function memory_display(stack_info, viriables_info, canvas_div='memeory-display-canvas') {
 	stack_info = ["#0 test () at ../../tests/test_program2.cpp:18", "#1 0x0000555555555172 in main () at ../../tests/test_program2.cpp:24"]
 	viriables_info = ["i = 0", "sum = -137699088", "p = 0x7fffffffdc30"]
 
@@ -79,7 +91,7 @@ export function memory_display(stack_info, viriables_info) {
 
 	// * 构建内存分布 memory_blocks
 	
-	var canvas = document.getElementById('memeory-display-canvas');
+	var canvas = document.getElementById(canvas_div);
 	var ctx = canvas.getContext('2d');
 	var width = 200, length = 400;
 

@@ -99,21 +99,22 @@ Description:
 	<div class="editor-container">
 		<!-- ! 核心， monaco 编辑器 -->
 		<div id="editor" class="edit-area"></div>
+		<!-- 预览区域 -->
 		<div class="preview-area">
 			<div class="toolbar">
 				<div class="toolbar-item">
 					<div id="step-btn"> <!-- step-btn 和 editor.js 中的函数绑定在一起-->
-						<button>下一步</button>
+						<button>⬇️</button>
 					</div>
 				</div>
 			</div>
 			<div id="breakpoints" class="preview-section">断点列表</div>
 			<div id="viriables-container" class="preview-section">变量列表</div>
 			<div id="stacktrace-container" class="preview-section">栈帧调用</div>
-			<div id="memeory-display" class="preview-section">内存分布图
+			<div id="memeory-display" class="preview-section">
+				内存分布图
 				<canvas id="memeory-display-canvas" width="200" height="400" style="border:1px solid #d3d3d3;"></canvas>
 			</div>
-			<div id="another-container" class="preview-section">杂乱的变量（因为封装的问题）</div>
 		</div>
 	</div>
 

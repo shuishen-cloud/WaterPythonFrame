@@ -40,7 +40,7 @@ def post_breakpoints():
     front_breakpoints = request.get_json()
     print(f"* 断点列表：{front_breakpoints}")
     debugger.breakpoints = front_breakpoints
-    return jsonify({"code":"back get breakpoints list"})
+    return jsonify({"back":"back get breakpoints list"})
 
 @app.route('/get_currunt_line', methods=['GET'])
 def get_currunt_line():
@@ -53,7 +53,7 @@ def step():
     step 方法只负责更新后端调试器实例的信息，而消息的获取仍然通过之前的接口
     """
     debugger.step()
-    return jsonify({"code": "next success!"})
+    return jsonify({"back": "next success!"})
 
 if __name__ == '__main__':
     app.run(debug=True)  # 调试模式启动（开发环境用）
