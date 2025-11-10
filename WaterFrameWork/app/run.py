@@ -25,16 +25,6 @@ debugger = Debugger()
 def index():
     return render_template('index.html')
 
-# 问候页面路由（支持 GET 和 POST 方法）
-@app.route('/greet', methods=['GET', 'POST'])
-def greet():
-    if request.method == 'POST':
-        # 获取表单提交的用户名
-        name = request.form.get('name', '匿名用户')
-        return render_template('greet.html', name=name)
-    # GET 请求时返回表单页面
-    return render_template('greet.html')
-
 @app.route('/get_debugger_info', methods=['GET'])
 def get_debugger_info():
     if request.method == 'GET':
@@ -50,7 +40,7 @@ def post_breakpoints():
     front_breakpoints = request.get_json()
     print(f"* 断点列表：{front_breakpoints}")
     debugger.breakpoints = front_breakpoints
-    return jsonify({"code":"back end get breakpoints list"})
+    return jsonify({"code":"back get breakpoints list"})
 
 @app.route('/get_currunt_line', methods=['GET'])
 def get_currunt_line():

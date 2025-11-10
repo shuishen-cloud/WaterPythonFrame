@@ -56,7 +56,7 @@ int main(void){
 const debugState = {
 	currentLine: null, // 当前执行行（如 3）
 	breakpoints: new Set(), // 断点行（如 Set(3,5)）
-	lineData: {}, // 每行额外数据（如变量值）：{3: { variables: { a: 10, p: '0x7fffffffde40' } }}
+	lineData: {}, // 每行额外数据
 	decorationIds: null,	// 当前的装饰，是一个字符串数组
 
 	// 更新状态的方法
@@ -65,7 +65,6 @@ const debugState = {
 		this.render(); // 状态变更后重新渲染
 	},
 	render: function () {
-		// TODO 后续实现：渲染断点、当前执行行、变量信息
 	}
 };
 
@@ -91,10 +90,11 @@ debugState.render = function () {
 
 	// 在工具栏显式断点列表
 	const breakpoints_container = document.getElementById("breakpoints")
-	breakpoints_container.textContent = Array.from(breakpoints)
+	const breakpoints_arr = Array.from(breakpoints)
+	breakpoints_container.textContent = breakpoints_arr
 
 	// ! 将断点列表以 JSON 发送到后端
-	post_to_back("post_breakpoints", JSON.stringify(Array.from(breakpoints)))
+	post_to_back("post_breakpoints", JSON.stringify(breakpoints_arr))
 
 	// 2. 渲染当前执行行（整行高亮）
 	if (currentLine) {
@@ -130,7 +130,6 @@ debugState.render = function () {
 
 // 1. 点击行号左侧添加/移除断点
 editor.onMouseDown(event => {
-	// const position = editor.getPosition(event.event.offsetX, event.event.offsetY);
 	// ! 首先确定鼠标到底能否检测到点击
 	const position = editor.getPosition({
 		x: event.event.posx,
@@ -158,10 +157,10 @@ document.getElementById('step-btn').addEventListener('click', () => {
 
 	// * 获取当前行数
 	get_from_back_to_vriable("get_currunt_line", "another-container").then(data => { debugState.currentLine = data["curruntline"] });
-	// ! 将其转化为数字
+	// ! 将其转化为数字，这里 fetch 请求的异步解析有问题
 	const nextLine = Number(debugState.currentLine)
 
-	// ! 执行后端的下一步
+	// * 执行后端的下一步
 	get_from_back_to_container("step", "another-container")
 
 	// * 获取变量列表和栈帧调用并显示到容器上
